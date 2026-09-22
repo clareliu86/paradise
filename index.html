@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PARADISE — WebGame</title>
+  <meta name="description" content="A Hong Kong urban-horror escape game set in an abandoned hospital.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000000'/%3E%3Cpath d='M12 32c7-13 14-13 20 0s13 13 20 0c-7-13-14-13-20 0s-13 13-20 0Z' fill='none' stroke='%23eef2eb' stroke-width='5'/%3E%3C/svg%3E">
+  <style>
+    :root { color-scheme:dark; --paper:#ddd0b4; --acid:#e9bd4b; --cyan:#4a9589; --red:#b1171f; --blood:#65090e; --jade:#0b2b24; --panel:#040a08ed; }
+    * { box-sizing:border-box; }
+    html,body { width:100%; min-height:100%; margin:0; background:#020403; }
+    body { overflow:hidden; color:var(--paper); font-family:"Songti TC","Noto Serif TC","PingFang TC","Microsoft JhengHei",Georgia,serif; }
+    button,a { font:inherit; }
+    button { color:inherit; }
+    .game { position:relative; width:100vw; min-height:100svh; overflow:hidden; background:#020403; isolation:isolate; }
+    .scene-frame { position:absolute; inset:0; margin:auto; width:100%; height:100%; animation:scene-in .58s ease-out both; }
+    .scene-image { width:100%; height:100%; object-fit:cover; object-position:center; filter:sepia(.2) saturate(.56) hue-rotate(82deg) contrast(1.26) brightness(.52); user-select:none; pointer-events:none; }
+    .scene-frame.clean .scene-image { filter:sepia(.16) saturate(.62) hue-rotate(78deg) contrast(1.18) brightness(.62); }
+    .veil { position:absolute; inset:0; z-index:2; pointer-events:none; background:radial-gradient(circle at 72% 18%,#b1171f20,transparent 26%),radial-gradient(circle at 20% 75%,#0b5f502b,transparent 34%),radial-gradient(circle at 50% 42%,transparent 16%,#00140e40 54%,#000d 112%),linear-gradient(90deg,#0008,transparent 17% 82%,#000a),linear-gradient(180deg,#07110d12,#1603063d); box-shadow:inset 0 0 120px #000,inset 0 0 30px #4a080a66; }
+    .scanlines { position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.28; background:repeating-linear-gradient(0deg,transparent 0 2px,#d8cab20d 3px,#0008 4px),repeating-linear-gradient(90deg,#00140d0b 0 1px,transparent 1px 5px); mix-blend-mode:screen; animation:flicker .22s steps(2) infinite; }
+    .scanlines::before { content:""; position:absolute; inset:-8%; background:radial-gradient(circle at 18% 27%,#e3b84c12 0 1px,transparent 2px),radial-gradient(circle at 74% 66%,#fff1 0 1px,transparent 2px); background-size:7px 9px,11px 13px; opacity:.45; animation:grain .24s steps(2) infinite; }
+    .scanlines::after { content:""; position:absolute; inset:-80% 0 0; background:linear-gradient(transparent 49%,#d9b86718 50%,transparent 51%); animation:sweep 9s linear infinite; }
+    .hud { position:fixed; inset:0 0 auto; z-index:50; display:flex; justify-content:space-between; align-items:center; padding:max(16px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 0 max(18px,env(safe-area-inset-left)); pointer-events:none; }
+    .hud button { pointer-events:auto; border:1px solid #7e2928; background:#030705d6; min-width:46px; height:46px; padding:0 12px; cursor:pointer; transition:.18s ease; backdrop-filter:blur(8px); box-shadow:inset 0 0 18px #42070a45; }
+    .hud button:hover,.hud button:focus-visible { color:#080604; background:var(--acid); border-color:#f2d37a; outline:none; box-shadow:4px 4px 0 var(--blood),0 0 22px #b1171f55; }
+    .brand { min-width:52px !important; padding:4px 6px !important; border:0 !important; background:transparent !important; box-shadow:none !important; backdrop-filter:none !important; }
+    .brand:hover,.brand:focus-visible { color:inherit !important; background:transparent !important; border-color:transparent !important; outline:none; box-shadow:none !important; transform:none; }
+    .brand:focus-visible img { filter:sepia(1) saturate(3) drop-shadow(2px 0 var(--cyan)) drop-shadow(-2px 0 var(--red)) drop-shadow(0 0 8px var(--acid)); }
+    .brand img { display:block; width:40px; height:26px; object-fit:contain; filter:sepia(1) saturate(2.2) drop-shadow(2px 0 var(--cyan)) drop-shadow(-2px 0 var(--red)); }
+    .hud-right { display:flex; gap:8px; }
+    .sound[aria-pressed="true"] { color:var(--acid); }
+    .screen { position:absolute; inset:0; z-index:10; display:grid; place-items:center; padding:clamp(70px,9vh,110px) clamp(18px,5vw,80px) clamp(42px,7vh,80px); }
+    .home { width:min(92vw,780px); text-align:center; }
+    .title { margin:0 0 clamp(40px,9vh,84px); color:#ded0b1; font-family:"STKaiti","KaiTi","Songti TC",Georgia,serif; font-size:clamp(4rem,12vw,8.5rem); line-height:.76; letter-spacing:.08em; text-shadow:7px 7px 0 #020302,3px 0 #29756a,-3px 0 #8d0d14,0 0 34px #76080d66; animation:title-glitch 6s steps(1) infinite; }
+    .title::after { content:"樂 園"; display:block; margin-top:.42em; padding-left:1.15em; color:#b92127; font-family:"STKaiti","KaiTi",serif; font-size:.2em; letter-spacing:1.15em; line-height:1; text-shadow:1px 1px 0 #210204,0 0 12px #b1171f88; }
+    .menu { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
+    .choice,.text-link { display:inline-grid; place-items:center; min-width:190px; min-height:58px; padding:14px 22px; border:1px solid #7d2b28; background:linear-gradient(180deg,#08140fd9,#030504ef); color:#e2d7bf; font-family:"PingFang TC","Microsoft JhengHei","Courier New",monospace; font-weight:700; font-size:1rem; line-height:1.2; letter-spacing:.2em; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:.18s ease; box-shadow:inset 0 0 0 1px #d3b26212,inset 0 -12px 24px #37040638; }
+    .choice:hover,.choice:focus-visible,.text-link:hover,.text-link:focus-visible { color:#130704; background:var(--acid); border-color:#f1d075; outline:none; transform:translateY(-2px); box-shadow:6px 6px 0 var(--blood),0 0 22px #b1171f66; }
+    .choice.danger:hover,.choice.danger:focus-visible { color:#f1dec1; background:var(--blood); border-color:#d84142; box-shadow:6px 6px 0 #210204,0 0 24px #b1171f77; }
+    .caption { position:absolute; left:50%; bottom:max(42px,6vh); z-index:20; transform:translateX(-50%); width:min(90vw,1020px); padding:clamp(20px,4vw,40px); background:linear-gradient(103deg,#03100ded,#0c0908f2 63%,#190508e8); border:1px solid #645c44; border-left:4px solid var(--red); box-shadow:0 22px 70px #000d,inset 0 0 46px #0a291f2b; backdrop-filter:blur(10px) saturate(.7); }
+    .caption.center { top:50%; bottom:auto; transform:translate(-50%,-50%); text-align:center; }
+    .eyebrow { margin:0 0 12px; color:var(--acid); font-family:"PingFang TC","Microsoft JhengHei",sans-serif; font-size:.8rem; letter-spacing:.28em; text-transform:uppercase; }
+    .caption h1,.caption h2 { margin:0 0 16px; color:#e0d2b5; font-family:"STKaiti","KaiTi","Songti TC",Georgia,serif; font-size:clamp(1.55rem,4vw,3.2rem); line-height:1; letter-spacing:.08em; text-shadow:2px 0 #2b7168,-2px 0 #871017,0 3px 14px #000; }
+    .caption p,.caption li { font-size:clamp(1rem,1.8vw,1.14rem); line-height:1.65; }
+    .caption p { margin:0; }
+    .caption ul { margin:12px 0 0; padding-left:1.4em; }
+    .caption .menu { justify-content:flex-start; margin-top:22px; }
+    .caption.center .menu { justify-content:center; }
+    .caption.ending { left:clamp(22px,6vw,92px); bottom:clamp(28px,7vh,72px); transform:none; width:min(86vw,900px); padding:clamp(26px,4vw,48px); overflow:hidden; text-align:left; border:0; border-left:5px solid var(--ending-accent); background:linear-gradient(108deg,var(--ending-panel),#020403f5 64%,#080907e8); clip-path:polygon(0 0,calc(100% - 28px) 0,100% 28px,100% 100%,28px 100%,0 calc(100% - 28px)); box-shadow:0 26px 90px #000f,inset 0 0 0 1px #d9ccb529,inset 0 0 70px var(--ending-glow); backdrop-filter:blur(13px) saturate(.65); }
+    .caption.ending::before { content:attr(data-case); display:inline-flex; margin:-4px 0 24px; padding:6px 10px 5px; color:#0a0805; background:var(--ending-accent); font-family:"PingFang TC","Microsoft JhengHei",sans-serif; font-size:.72rem; font-weight:900; letter-spacing:.22em; text-transform:uppercase; box-shadow:4px 4px 0 #000b; }
+    .caption.ending::after { content:attr(data-number); position:absolute; right:clamp(18px,4vw,48px); bottom:-.2em; z-index:0; color:transparent; font-family:Impact,"Arial Black",sans-serif; font-size:clamp(7rem,18vw,14rem); line-height:1; letter-spacing:-.08em; -webkit-text-stroke:1px var(--ending-mark); opacity:.34; pointer-events:none; }
+    .caption.ending > * { position:relative; z-index:1; }
+    .caption.ending .eyebrow { margin:0 0 10px; color:var(--ending-accent); font-weight:800; }
+    .caption.ending h1 { margin-bottom:20px; font-size:clamp(2.6rem,7vw,5.8rem); letter-spacing:.04em; }
+    .caption.ending p { max-width:660px; }
+    .caption.ending .menu { justify-content:flex-end; margin-top:30px; padding-right:clamp(0px,2vw,20px); }
+    .caption.ending .choice { min-width:210px; color:var(--ending-accent); border-color:var(--ending-accent); background:#020403c9; box-shadow:inset 0 0 24px var(--ending-glow); }
+    .caption.ending .choice:hover,.caption.ending .choice:focus-visible { color:#090604; background:var(--ending-accent); box-shadow:6px 6px 0 #000b,0 0 28px var(--ending-glow); }
+    .ending-death { --ending-accent:#c92c32; --ending-panel:#200507f2; --ending-glow:#a400164d; --ending-mark:#d13a3f; }
+    .ending-captured { --ending-accent:#65a89d; --ending-panel:#031713f2; --ending-glow:#16675c4a; --ending-mark:#6fb5a9; }
+    .ending-escape { --ending-accent:#d8af52; --ending-panel:#171104f2; --ending-glow:#9b6d183d; --ending-mark:#d8af52; }
+    .scene-frame.end-shock .scene-image { filter:sepia(.14) saturate(.72) hue-rotate(330deg) contrast(1.4) brightness(.5); }
+    .scene-frame.end-shock .veil { background:radial-gradient(circle at 76% 20%,#b1171f45,transparent 32%),linear-gradient(100deg,#0003 22%,#250004b8),radial-gradient(circle at 50% 46%,transparent 12%,#000b 92%); box-shadow:inset 0 0 150px #000,inset 0 0 46px #7b080d80; }
+    .scene-frame.end-captured .scene-image { filter:sepia(.1) saturate(.48) hue-rotate(94deg) contrast(1.34) brightness(.46); }
+    .scene-frame.end-escape .scene-image { filter:sepia(.35) saturate(.63) hue-rotate(350deg) contrast(1.18) brightness(.58); }
+    .terms { max-height:72vh; overflow:auto; text-align:left; }
+    .terms strong { color:var(--acid); }
+    .terms .signature { margin:10px 8% 0 0; color:var(--red); font-family:"STKaiti","KaiTi",cursive; font-size:1.45rem; font-weight:700; letter-spacing:.12em; text-align:right; transform:rotate(-4deg); text-shadow:0 0 12px #b1171f66; }
+    .prompt { position:absolute; top:clamp(74px,10vh,104px); left:50%; z-index:18; transform:translateX(-50%); margin:0; padding:9px 16px; color:var(--acid); background:#030805dc; border:1px solid #762321; border-left:3px solid var(--red); font-family:"PingFang TC","Microsoft JhengHei",sans-serif; font-size:.8rem; letter-spacing:.24em; text-transform:uppercase; box-shadow:0 8px 28px #0009; backdrop-filter:blur(7px); }
+    .spot { position:absolute; z-index:18; border:1px solid transparent; background:transparent; cursor:crosshair; }
+    .spot::before { content:""; position:absolute; top:50%; left:50%; width:14px; height:14px; border:1px solid var(--red); transform:translate(-50%,-50%) rotate(45deg); opacity:0; transition:.18s ease; box-shadow:0 0 16px #b1171f; }
+    .spot::after { content:attr(aria-label); position:absolute; left:50%; bottom:8px; transform:translateX(-50%) translateY(6px); width:max-content; max-width:190px; padding:7px 10px; color:#170b05; background:var(--acid); border:1px solid #f4d984; font-weight:700; font-size:.76rem; letter-spacing:.12em; text-transform:uppercase; opacity:0; transition:.18s ease; pointer-events:none; }
+    .spot:hover,.spot:focus-visible { border-color:#a51a2266; outline:none; background:#65090e12; box-shadow:inset 0 0 56px #b1171f18; }
+    .spot:hover::before,.spot:focus-visible::before,.spot:hover::after,.spot:focus-visible::after { opacity:1; transform:translate(-50%,0); }
+    .spot:hover::before,.spot:focus-visible::before { transform:translate(-50%,-50%) rotate(45deg); }
+    .item-card { display:grid; grid-template-columns:minmax(150px,260px) 1fr; gap:clamp(20px,4vw,44px); align-items:center; text-align:left; }
+    .item-card img { width:100%; max-height:46vh; object-fit:contain; filter:sepia(.15) saturate(.78) hue-rotate(76deg) contrast(1.12) drop-shadow(0 16px 26px #000c); }
+    .code { display:block; margin-top:16px; color:var(--acid); font-size:clamp(1.25rem,4vw,2.4rem); letter-spacing:.12em; word-break:break-all; }
+    .reference { width:min(94vw,1100px); max-height:78vh; overflow:auto; text-align:left; }
+    .credits { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 24px; margin-top:20px; }
+    .credits a { overflow-wrap:anywhere; color:#c8c4ad; line-height:1.5; }
+    .credits a:hover { color:var(--acid); }
+    .mindmap { width:100%; margin:20px 0 0; border:1px solid #7d2b28; filter:sepia(.18) saturate(.78) contrast(1.08); }
+    .foot { position:fixed; left:0; right:0; bottom:16px; z-index:30; margin:0; text-align:center; color:#a88e68; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; font-size:.78rem; letter-spacing:.18em; pointer-events:none; }
+    .toast { position:fixed; left:50%; top:80px; z-index:80; transform:translateX(-50%) translateY(-12px); padding:12px 18px; color:#ead7b4; background:var(--blood); border:1px solid #c33a3f; font-weight:700; box-shadow:0 8px 30px #000b,0 0 18px #b1171f55; opacity:0; pointer-events:none; transition:.2s ease; }
+    .toast.show { opacity:1; transform:translateX(-50%); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @keyframes scene-in { from { opacity:0; transform:scale(1.015); filter:blur(5px); } }
+    @keyframes flicker { 50% { opacity:.12; } }
+    @keyframes grain { 0% { transform:translate(0,0); } 25% { transform:translate(2%,-1%); } 50% { transform:translate(-1%,2%); } 75% { transform:translate(1%,1%); } }
+    @keyframes sweep { to { transform:translateY(80%); } }
+    @keyframes title-glitch { 0%,93%,100% { transform:none; } 94% { transform:translate(3px,-1px); } 95% { transform:translate(-2px,1px); } }
+    @media (pointer:coarse) { .spot::before { opacity:.55; } }
+    @media (max-width:720px) {
+      .screen { padding-inline:16px; }
+      .caption { bottom:max(24px,4vh); padding:20px; max-height:67vh; overflow:auto; }
+      .caption .menu { gap:8px; }
+      .caption.ending { left:16px; right:16px; bottom:max(22px,3vh); width:auto; max-height:76vh; padding:24px 22px; clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)); }
+      .caption.ending::before { margin-bottom:18px; }
+      .caption.ending::after { right:18px; font-size:7rem; }
+      .caption.ending h1 { font-size:clamp(2.4rem,15vw,4rem); }
+      .caption.ending .menu { justify-content:stretch; padding-right:0; }
+      .caption.ending .choice { width:100%; }
+      .choice,.text-link { min-width:140px; min-height:52px; font-size:.88rem; padding:12px 15px; }
+      .item-card { grid-template-columns:1fr; text-align:center; }
+      .item-card img { max-height:25vh; }
+      .credits { grid-template-columns:1fr; }
+      .foot { display:none; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+  <main id="game" class="game" aria-live="polite"><header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="./assets/infinity.png" alt=""></button><div class="hud-right"><button class="sound" type="button" aria-label="Play original horror ambience" title="Play ambience" aria-pressed="false" data-action="sound" data-web-action="sound">♪</button></div></header><div class="scene-frame clean"><img class="scene-image" src="./assets/home.jpeg" alt=""><div class="veil"></div><section class="screen"><div class="home"><h1 class="title">PARADISE</h1><div class="menu"><button class="choice " type="button" data-go="intro" data-web-action="go:intro">START</button><button class="choice " type="button" data-go="reference" data-web-action="go:reference">MORE</button></div></div></section><p class="foot">CLARE LIU</p></div><span class="sr-only">Current scene: home. Key: not acquired.</span></main>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div id="toast" class="toast" role="status"></div>
+  <script>
+    const ASSET = "./assets/";
+    const sceneIds = ["home","reference","intro","broadcast","contracts","ward","computer","newspaper","doorPassword","corridorLocked","lockedDoor","lab","labPaper","labMedicine","keyChoice","corridorKey","monitorOff","monitorQuestion","monitorOn","end1","end2","end3"];
+    const saved = JSON.parse(localStorage.getItem("paradise-game-state") || "{}");
+    const state = { hasKey:Boolean(saved.hasKey), sound:false };
+    let current = sceneIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : "home";
+    let audio;
+    const escapeHtml = value => String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
+    const button = (label,target,extra="") => `<button class="choice ${extra}" type="button" data-go="${target}" data-web-action="go:${target}">${label}</button>`;
+    const actionButton = (label,action,extra="") => `<button class="choice ${extra}" type="button" data-action="${action}" data-web-action="${action}">${label}</button>`;
+    const frame = (image,inner,cls="") => `<div class="scene-frame ${cls}"><img class="scene-image" src="${ASSET+image}" alt=""><div class="veil"></div>${inner}</div>`;
+    const caption = (eyebrow,title,body,controls,cls="") => `<section class="caption ${cls}"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${body}<div class="menu">${controls}</div></section>`;
+    const hotspot = (label,target,style,webAction=`go:${target}`) => `<button class="spot" type="button" aria-label="${label}" style="${style}" data-go="${target}" data-web-action="${webAction}"></button>`;
+    const homeHud = () => `<header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="${ASSET}infinity.png" alt=""></button><div class="hud-right"><button class="sound" type="button" aria-label="${state.sound?"Mute":"Play"} original horror ambience" title="${state.sound?"Mute":"Play"} ambience" aria-pressed="${state.sound}" data-action="sound" data-web-action="sound">${state.sound?"Ⅱ":"♪"}</button></div></header>`;
+
+    const scenes = {
+      home:()=>frame("home.jpeg",`<section class="screen"><div class="home"><h1 class="title">PARADISE</h1><div class="menu">${button("START","intro")}${button("MORE","reference")}</div></div></section><p class="foot">CLARE LIU</p>`,"clean"),
+      reference:()=>frame("home.jpeg",`<section class="screen"><div class="caption center reference"><p class="eyebrow">PARADISE WEBGAME</p><h1>REFERENCE / MINDMAP</h1><p>Visual references credited by the original project:</p><div class="credits"><a href="https://www.artstation.com/prints/art_print/pzaJ3/lengfeng-office-buildings-under-construction" target="_blank" rel="noreferrer">Office buildings under construction</a><a href="https://www.artstation.com/artwork/DAmOyG" target="_blank" rel="noreferrer">ArtStation reference 01</a><a href="https://www.artstation.com/artwork/XEdmR" target="_blank" rel="noreferrer">ArtStation reference 02</a><a href="https://www.artstation.com/artwork/QkZXZ" target="_blank" rel="noreferrer">ArtStation reference 03</a><a href="https://www.artstation.com/artwork/e0AgEY" target="_blank" rel="noreferrer">ArtStation reference 04</a></div><img class="mindmap" src="${ASSET}mindmap.jpg" alt="Original Paradise game mind map"><div class="menu">${button("HOME","home")}</div></div></section>`),
+      intro:()=>frame("home.jpeg",caption("INTRO","2002",`<p>In 2002, many young people in the city disappeared for no apparent reason. After the police received reports from their families, they checked the surveillance. The video had been deliberately tampered with; no information could be recovered. Some of the missing young people reappeared a month later, yet when questioned by police, they kept their mouths shut...</p>`,button("CONTINUE >>>","broadcast"))),
+      broadcast:()=>frame("corridor.webp",caption("TRANSMISSION 00:10","BROADCAST",`<p>Welcome to Paradise, NO.16. You are lucky to be chosen by us to participate in this game. Want to escape alive? Look for clues around you. But... if you are not careful, you may also die. HAHAHAHAHA... If you are able to escape, you can get the bonus. Good luck to you.</p>`,button("CONTINUE >>>","contracts"))),
+      contracts:()=>frame("ward-blur.webp",`<section class="caption center terms"><p class="eyebrow">PLAYER NO.16</p><h1>TERM</h1><ul><li>The gamer may not interrupt the game at will.</li><li>A gamer who refuses to play will be eliminated from the game.</li><li>Successful escapees will be rewarded with <strong>$50,000</strong>.</li><li>Do not tell the outside world anything that happens here, or you will die.</li></ul><p><strong>ENJOY THE GAME.</strong></p><p class="signature" aria-label="Signed 86">86</p><div class="menu">${button("YES","ward")}${button("YES","ward")}</div></section>`),
+      ward:()=>frame("ward.webp",`<p class="prompt">Click the picture</p>${hotspot("Inspect the door","doorPassword","left:5%;top:18%;width:14%;height:61%")}${hotspot("Search the computer","computer","left:47%;top:39%;width:12%;height:20%")}${hotspot("Look under the pillow","newspaper","left:59%;top:48%;width:19%;height:19%")}`),
+      computer:()=>frame("ward.webp",caption("SEARCH / COMPUTER","RECYCLE BIN",`<div class="item-card"><img src="${ASSET}computer.png" alt="Computer"><p>The computer is not locked. The web log contains nothing unusual, but a sketch in the recycle bin holds a string of numbers:<span class="code">107379609107906906</span></p></div>`,button("BACK","ward"),"center")),
+      newspaper:()=>frame("ward.webp",caption("SEARCH / NEWSPAPER","A DAMAGED REPORT",`<div class="item-card"><img src="${ASSET}newspaper.webp" alt="Old newspaper"><p>You find a newspaper under the pillow. Most of the print is pasted over and impossible to read. Only “hospital” remains visible. It seems someone was performing human experiments here when an explosion occurred.</p></div>`,button("BACK","ward"),"center")),
+      doorPassword:()=>frame("ward.webp",caption("QUESTION","What is the code for the door?",`<p>Use the clues hidden around the room.</p>`,`${actionButton("136199","door-correct")}${actionButton("139166","door-wrong","danger")}`,"center")),
+      corridorLocked:()=>frame("corridor.gif",`<p class="prompt">Choose the door</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Door 04","lockedDoor","left:46%;top:41%;width:12%;height:27%")}`),
+      lockedDoor:()=>frame("corridor.gif",caption("DOOR 04","NEED KEY TO OPEN DOOR",`<p>The lock has no keypad. Something small and metallic is missing.</p>`,button("BACK TO CORRIDOR >>>","corridorLocked"),"center")),
+      lab:()=>frame("lab.jpeg",`<p class="prompt">Click the picture</p>${hotspot("Read the paper","labPaper","left:62%;top:6%;width:25%;height:43%")}${hotspot("Inspect the medicine","labMedicine","left:2%;top:9%;width:50%;height:54%")}${hotspot("Search the collection","keyChoice","left:63%;top:34%;width:18%;height:48%")}<button class="choice" type="button" style="position:absolute;left:50%;bottom:4%;z-index:22;transform:translateX(-50%)" data-action="corridor" data-web-action="corridor">BACK TO CORRIDOR &gt;&gt;&gt;</button>`),
+      labPaper:()=>frame("lab.jpeg",caption("SEARCH / PAPER","A SMALL NOTE",`<div class="item-card"><img src="${ASSET}paper.webp" alt="Rolled map and note"><p>The rolled-up map doesn't seem special, but inside it you find a small note with a string of numbers:<span class="code">19911107</span></p></div>`,button("BACK","lab"),"center")),
+      labMedicine:()=>frame("lab.jpeg",caption("SEARCH / MEDICINE","UNLABELLED LIQUID",`<div class="item-card"><img src="${ASSET}medicine.png" alt="Chemical bottles"><p>The liquids are unlabelled. One bottle releases a pungent chemical odour when opened. You decide not to move anything and put it back.</p></div>`,button("BACK","lab"),"center")),
+      keyChoice:()=>frame("lab.jpeg",caption("SEARCH / COLLECTION","AN OLD KEY",`<div class="item-card"><img src="${ASSET}key.png" alt="Old metal key"><p>A metal key is hidden behind the collection. It may open one of the doors in the corridor.</p></div>`,`${actionButton("KEEP IT","keep-key")}${button("PUT BACK","lab")}`,"center")),
+      corridorKey:()=>frame("corridor.gif",`<p class="prompt">Choose the door · key acquired</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Use the key on Door 04","monitorOff","left:46%;top:41%;width:12%;height:27%")}`),
+      monitorOff:()=>frame("monitor-off.webp",`<p class="prompt">Click the picture</p>${hotspot("Inspect the upper monitor","monitorQuestion","left:79%;top:0%;width:18%;height:27%")}${hotspot("Touch the alarm controls","end2","left:1%;top:65%;width:29%;height:31%")}${hotspot("Return to corridor","corridorKey","left:44%;top:78%;width:18%;height:20%")}`),
+      monitorQuestion:()=>frame("monitor-off.webp",caption("QUESTION","What is the password for monitoring?",`<div class="item-card"><img src="${ASSET}password-clue.jpg" alt="Handwritten clue"><p>The answer is assembled from the clues you found in the ward and laboratory.</p></div>`,`${actionButton("4910101899","monitor-wrong","danger")}${actionButton("1018102107","monitor-correct")}`,"center")),
+      monitorOn:()=>frame("monitor-on.jpeg",`<p class="prompt">Monitoring unlocked · Click the picture</p>${hotspot("Trigger the alarm","end2","left:1%;top:65%;width:29%;height:31%")}${hotspot("Release the exit lock","end3","left:69%;top:64%;width:29%;height:33%")}${hotspot("Return to corridor","corridorKey","left:43%;top:78%;width:18%;height:20%")}`,"clean"),
+      end1:()=>frame("zombie.webp",`<section class="caption ending ending-death" data-case="死亡確認 / INCIDENT FILE" data-number="01"><p class="eyebrow">ENDING 01 · DOOR 01</p><h1>BYE.</h1><p>You decide to walk through the first door on the left. You did not expect zombies behind it. One of them detonates the bomb.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-shock"),
+      end2:()=>frame("captured.webp",`<section class="caption ending ending-captured" data-case="收容記錄 / SUBJECT FILE" data-number="02"><p class="eyebrow">ENDING 02 · DETAINED</p><h1>SUBJECT NO.16</h1><p>You touched the alarm and drew the manager's attention. The manager finds you in the monitoring room and takes you away for human research experiments.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-captured"),
+      end3:()=>frame("home.jpeg",`<section class="caption ending ending-escape" data-case="逃出確認 / CASE CLOSED" data-number="03"><p class="eyebrow">ENDING 03 · ESCAPED</p><h1>CONGRATULATIONS</h1><p>Congratulations on your successful escape! Rewards will be credited directly to your bank account upon your arrival home.</p><p style="margin-top:12px">But... don't forget the contract.</p><p style="margin-top:12px;color:var(--ending-accent)">SEE YOU NEXT TIME.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-escape")
+    };
+
+    function persist(){ localStorage.setItem("paradise-game-state",JSON.stringify(state)); }
+    function resolveScene(id){ return id==="corridor"?(state.hasKey?"corridorKey":"corridorLocked"):id; }
+    function go(id){ const next=resolveScene(id); if(!sceneIds.includes(next))return; current=next; if(location.hash.slice(1)!==next)history.pushState(null,"",`#${next}`); render(); }
+    function render(){ document.title=current==="home"?"PARADISE — WebGame":`${current.replace(/([A-Z])/g," $1").toUpperCase()} | PARADISE`; document.getElementById("game").innerHTML=`${homeHud()}${scenes[current]()}<span class="sr-only">Current scene: ${escapeHtml(current)}. Key: ${state.hasKey?"acquired":"not acquired"}.</span>`; updateSoundscape(current); }
+    function notify(message){ const toast=document.getElementById("toast"); toast.textContent=message; toast.classList.add("show"); clearTimeout(notify.timer); notify.timer=setTimeout(()=>toast.classList.remove("show"),1800); }
+    function makeNoiseBuffer(ctx,seconds=8){
+      const buffer=ctx.createBuffer(1,ctx.sampleRate*seconds,ctx.sampleRate);
+      const channel=buffer.getChannelData(0); let last=0;
+      for(let i=0;i<channel.length;i++){ const white=Math.random()*2-1; last=last*.985+white*.015; channel[i]=last*.9+white*.1; }
+      return buffer;
+    }
+    function makeReverb(ctx,seconds=2.8){
+      const impulse=ctx.createBuffer(2,ctx.sampleRate*seconds,ctx.sampleRate);
+      for(let c=0;c<2;c++){ const data=impulse.getChannelData(c); for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,3.4); }
+      return impulse;
+    }
+    function soundLevel(scene){
+      if(["home","reference","intro"].includes(scene))return .35;
+      if(["ward","computer","newspaper","doorPassword","contracts"].includes(scene))return .52;
+      if(["lab","labPaper","labMedicine","keyChoice"].includes(scene))return .68;
+      if(["corridorLocked","corridorKey","lockedDoor"].includes(scene))return .8;
+      if(["monitorOff","monitorQuestion","monitorOn"].includes(scene))return .94;
+      return 1;
+    }
+    function updateSoundscape(scene,immediate=false){
+      if(!audio)return; const {ctx,master,drone,air,filter}=audio; const now=ctx.currentTime; const level=soundLevel(scene); const glide=immediate?.05:1.6;
+      [[master.gain,.058+level*.018],[drone.gain,.14+level*.12],[air.gain,.018+level*.018],[filter.frequency,150+level*155]].forEach(([param,value])=>{param.cancelScheduledValues(now);param.setValueAtTime(Math.max(.0001,param.value),now);param.exponentialRampToValueAtTime(value,now+glide);});
+    }
+    function playHeartbeat(){
+      if(!audio)return; const {ctx,master,heartBus}=audio;
+      if(state.sound&&ctx.state==="running"){
+        const now=ctx.currentTime; [0,.19].forEach((delay,index)=>{ const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.type="sine"; osc.frequency.setValueAtTime(index?47:54,now+delay); osc.frequency.exponentialRampToValueAtTime(34,now+delay+.2); gain.gain.setValueAtTime(.0001,now+delay); gain.gain.exponentialRampToValueAtTime(index?.13:.19,now+delay+.025); gain.gain.exponentialRampToValueAtTime(.0001,now+delay+.32); osc.connect(gain).connect(heartBus); osc.start(now+delay); osc.stop(now+delay+.36); });
+      }
+      audio.heartTimer=setTimeout(playHeartbeat,3400+Math.random()*1900);
+    }
+    function playMetalStinger(){
+      if(!audio)return; const {ctx,metalBus}=audio;
+      if(state.sound&&ctx.state==="running"){
+        const now=ctx.currentTime; [233,337,521].forEach((frequency,index)=>{ const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.type=index===1?"square":"sine"; osc.frequency.setValueAtTime(frequency*(.97+Math.random()*.06),now); gain.gain.setValueAtTime(.0001,now); gain.gain.exponentialRampToValueAtTime(.018/(index+1),now+.015); gain.gain.exponentialRampToValueAtTime(.0001,now+1.4+index*.35); osc.connect(gain).connect(metalBus); osc.start(now); osc.stop(now+2.2); });
+      }
+      audio.metalTimer=setTimeout(playMetalStinger,12000+Math.random()*16000);
+    }
+    function clickSoundKind(target){
+      const intent=target.dataset.action||target.dataset.go||"";
+      if(target.classList.contains("danger")||/wrong|end1|end2/.test(intent))return "danger";
+      if(/correct|keep-key|end3/.test(intent))return "confirm";
+      if(target.classList.contains("spot"))return "hotspot";
+      return "button";
+    }
+    function playClickSound(kind="button"){
+      if(!state.sound||!audio||audio.ctx.state!=="running")return;
+      const {ctx,uiBus}=audio; const now=ctx.currentTime;
+      const palettes={
+        button:[[520,"triangle",.045,.075,.62],[760,"sine",.016,.055,.78]],
+        hotspot:[[315,"square",.032,.105,.5],[930,"sine",.021,.15,.72]],
+        danger:[[138,"sawtooth",.04,.17,.42],[76,"sine",.058,.22,.7]],
+        confirm:[[620,"triangle",.038,.1,1.35],[930,"sine",.022,.16,1.18]],
+        power:[[240,"triangle",.044,.1,1.55],[480,"sine",.026,.18,1.3]]
+      };
+      (palettes[kind]||palettes.button).forEach(([frequency,type,volume,duration,ratio],index)=>{ const osc=ctx.createOscillator(); const gain=ctx.createGain(); const start=now+index*.012; osc.type=type; osc.frequency.setValueAtTime(frequency,start); osc.frequency.exponentialRampToValueAtTime(frequency*ratio,start+duration); gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(volume,start+.008); gain.gain.exponentialRampToValueAtTime(.0001,start+duration); osc.connect(gain).connect(uiBus); osc.start(start); osc.stop(start+duration+.02); });
+    }
+    function startSound(){
+      if(audio)return; const Ctx=window.AudioContext||window.webkitAudioContext; if(!Ctx)return; const ctx=new Ctx();
+      const master=ctx.createGain(); const compressor=ctx.createDynamicsCompressor(); const filter=ctx.createBiquadFilter(); const drone=ctx.createGain(); const air=ctx.createGain(); const heartBus=ctx.createGain(); const metalBus=ctx.createGain(); const uiBus=ctx.createGain(); const reverb=ctx.createConvolver(); const wet=ctx.createGain();
+      master.gain.value=.0001; compressor.threshold.value=-28; compressor.knee.value=18; compressor.ratio.value=5; compressor.attack.value=.015; compressor.release.value=.8; filter.type="lowpass"; filter.frequency.value=220; filter.Q.value=3.8; drone.gain.value=.2; air.gain.value=.026; heartBus.gain.value=.7; metalBus.gain.value=.8; uiBus.gain.value=.72; reverb.buffer=makeReverb(ctx); wet.gain.value=.32;
+      drone.connect(filter).connect(master); air.connect(master); heartBus.connect(master); metalBus.connect(reverb).connect(wet).connect(master); master.connect(compressor); uiBus.connect(compressor); compressor.connect(ctx.destination);
+      [[43.65,"sine",.5,-7],[65.41,"triangle",.16,5],[87.1,"sine",.09,-11],[99.7,"sine",.025,3]].forEach(([frequency,type,volume,detune])=>{ const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.type=type; osc.frequency.value=frequency; osc.detune.value=detune; gain.gain.value=volume; osc.connect(gain).connect(drone); osc.start(); });
+      const lfo=ctx.createOscillator(); const lfoDepth=ctx.createGain(); lfo.frequency.value=.045; lfoDepth.gain.value=72; lfo.connect(lfoDepth).connect(filter.frequency); lfo.start();
+      const room=ctx.createBufferSource(); const roomFilter=ctx.createBiquadFilter(); room.buffer=makeNoiseBuffer(ctx); room.loop=true; roomFilter.type="bandpass"; roomFilter.frequency.value=420; roomFilter.Q.value=.55; room.connect(roomFilter).connect(air); room.start();
+      const electric=ctx.createOscillator(); const electricGain=ctx.createGain(); electric.type="sine"; electric.frequency.value=50; electricGain.gain.value=.018; electric.connect(electricGain).connect(air); electric.start();
+      audio={ctx,master,filter,drone,air,heartBus,metalBus,uiBus,heartTimer:null,metalTimer:null}; updateSoundscape(current,true); playHeartbeat(); playMetalStinger();
+    }
+    function toggleSound(){
+      state.sound=!state.sound;
+      if(state.sound){startSound();audio?.ctx.resume();updateSoundscape(current,true);notify("AMBIENCE ON");}
+      else{audio?.ctx.suspend();notify("AMBIENCE OFF");}
+      persist();render();
+    }
+    function perform(action){
+      if(action==="home")return go("home");
+      if(action==="sound")return toggleSound();
+      if(action==="corridor")return go("corridor");
+      if(action==="door-correct"){notify("ACCESS GRANTED");return go("corridorLocked");}
+      if(action==="door-wrong"){notify("WRONG CODE");return go("ward");}
+      if(action==="keep-key"){state.hasKey=true;persist();notify("KEY ACQUIRED");return go("lab");}
+      if(action==="monitor-correct"){notify("MONITORING ONLINE");return go("monitorOn");}
+      if(action==="monitor-wrong"){notify("ACCESS DENIED");return go("monitorOff");}
+      if(action==="restart"){state.hasKey=false;persist();return go("home");}
+    }
+    document.addEventListener("click",event=>{ const target=event.target.closest("[data-go],[data-action]"); if(!target)return; if(target.dataset.action==="sound"){toggleSound();if(state.sound)playClickSound("power");return;} playClickSound(clickSoundKind(target)); if(target.dataset.go)go(target.dataset.go);else perform(target.dataset.action); });
+    addEventListener("popstate",()=>{current=sceneIds.includes(location.hash.slice(1))?location.hash.slice(1):"home";render();});
+    addEventListener("keydown",event=>{if(event.key==="Escape"&&current!=="home")go("home");});
+
+    function registerWebMcp(){
+      const context=document.modelContext; if(!context?.registerTool)return;
+      const safeRegister=tool=>{try{void Promise.resolve(context.registerTool(tool)).catch(()=>{});}catch{}};
+      safeRegister({name:"read_game_state",title:"Read Paradise game state",description:"Read the current visible scene, whether the key has been collected, and the actions currently available in the visible interface.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(){return{scene:current,hasKey:state.hasKey,availableActions:[...document.querySelectorAll("[data-web-action]")].map(el=>({action:el.dataset.webAction,label:el.getAttribute("aria-label")||el.textContent.trim()}))};}});
+      safeRegister({name:"choose_game_action",title:"Choose a visible game action",description:"Choose one action that is currently available in the Paradise game interface. Read the state first to get the action identifier.",inputSchema:{type:"object",properties:{action:{type:"string",minLength:1}},required:["action"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||typeof input.action!=="string")throw new Error("action must be a string");const visible=[...document.querySelectorAll("[data-web-action]")].find(el=>el.dataset.webAction===input.action);if(!visible)throw new Error("That action is not available in the current scene");visible.click();return{scene:current,hasKey:state.hasKey};}});
+      safeRegister({name:"restart_game",title:"Restart Paradise",description:"Restart the game from the title screen and clear the collected key.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(){perform("restart");return{scene:current,hasKey:state.hasKey};}});
+    }
+    render();
+    registerWebMcp();
+  </script>
+
+
+</body></html>
+
