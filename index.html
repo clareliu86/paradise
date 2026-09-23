@@ -40,8 +40,8 @@
     .supply-list { position:relative; display:flex; align-items:stretch; min-width:76px; border-left:1px solid #5d2522; color:#6f6759; font-family:"Courier New",monospace; font-size:.65rem; font-weight:700; letter-spacing:.08em; overflow:hidden; }
     .supply-list::before { content:""; position:absolute; inset:0; opacity:.16; background:repeating-linear-gradient(135deg,transparent 0 8px,#712123 9px 10px); }
     .supply-empty { position:relative; z-index:1; display:flex; align-items:center; padding:0 13px; letter-spacing:.14em; }
-    .supply-chip { position:relative; z-index:1; display:flex; align-items:center; gap:5px; min-width:54px; padding:0 8px; border-right:1px solid #4f211f; color:var(--acid); text-shadow:0 0 10px #e7bc4d55; white-space:nowrap; }
-    .supply-chip img { width:26px; height:26px; object-fit:contain; filter:sepia(.35) saturate(.9) drop-shadow(0 0 5px #d9b86755); }
+    .supply-chip { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; min-width:46px; padding:0 8px; border-right:1px solid #4f211f; }
+    .supply-chip img { width:30px; height:30px; object-fit:contain; filter:sepia(.35) saturate(.9) drop-shadow(0 0 5px #d9b86755); }
     .supply-count { display:flex; align-items:center; padding:0 11px; border-left:1px solid #5d2522; color:var(--acid); font-family:"Courier New",monospace; font-size:.72rem; letter-spacing:.06em; }
     .hud .sound { position:relative; min-width:46px; padding:0; border:0; background:transparent; box-shadow:none; backdrop-filter:none; color:#ddd0b4; }
     .hud .sound:hover,.hud .sound:focus-visible { color:var(--acid); border:0; outline:none; background:transparent; box-shadow:none; transform:none; text-shadow:0 0 12px #e9bd4b77; }
@@ -56,8 +56,8 @@
     .choice,.text-link { display:inline-grid; place-items:center; min-width:190px; min-height:58px; padding:14px 22px; border:1px solid #7d2b28; background:linear-gradient(180deg,#08140fd9,#030504ef); color:#e2d7bf; font-family:"PingFang TC","Microsoft JhengHei","Courier New",monospace; font-weight:700; font-size:1rem; line-height:1.2; letter-spacing:.2em; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:.18s ease; box-shadow:inset 0 0 0 1px #d3b26212,inset 0 -12px 24px #37040638; }
     .choice:hover,.choice:focus-visible,.text-link:hover,.text-link:focus-visible { color:#130704; background:var(--acid); border-color:#f1d075; outline:none; transform:translateY(-2px); box-shadow:6px 6px 0 var(--blood),0 0 22px #b1171f66; }
     .choice.danger:hover,.choice.danger:focus-visible { color:#f1dec1; background:var(--blood); border-color:#d84142; box-shadow:6px 6px 0 #210204,0 0 24px #b1171f77; }
-    .corridor-return { position:absolute; left:50%; bottom:clamp(22px,4vh,42px); z-index:24; width:min(320px,calc(100vw - 32px)); transform:translateX(-50%); backdrop-filter:blur(8px); }
-    .corridor-return:hover,.corridor-return:focus-visible { transform:translate(-50%,-2px); }
+    .corridor-return { position:absolute; left:50%; bottom:clamp(22px,4vh,42px); z-index:24; display:grid; place-items:center; width:min(360px,calc(100vw - 32px)); min-height:62px; padding:15px 24px; border:1px solid #8a2b29; border-left:4px solid var(--red); background:linear-gradient(180deg,#07100ff2,#020403fa); color:#e2d7bf; font-family:"PingFang TC","Microsoft JhengHei","Courier New",monospace; font-weight:700; font-size:1rem; line-height:1.2; letter-spacing:.18em; text-transform:uppercase; cursor:pointer; transform:translateX(-50%); transition:.18s ease; box-shadow:inset 0 0 0 1px #d3b26212,inset 0 -14px 26px #37040642,0 12px 36px #000c; backdrop-filter:blur(10px); }
+    .corridor-return:hover,.corridor-return:focus-visible { color:#130704; background:var(--acid); border-color:#f1d075; border-left-color:var(--red); outline:none; transform:translate(-50%,-2px); box-shadow:6px 6px 0 var(--blood),0 0 22px #b1171f66; }
     .caption { position:absolute; left:50%; bottom:max(42px,6vh); z-index:20; transform:translateX(-50%); width:min(90vw,1020px); padding:clamp(20px,4vw,40px); background:linear-gradient(103deg,#03100ded,#0c0908f2 63%,#190508e8); border:1px solid #645c44; border-left:4px solid var(--red); box-shadow:0 22px 70px #000d,inset 0 0 46px #0a291f2b; backdrop-filter:blur(10px) saturate(.7); }
     .caption.center { top:50%; bottom:auto; transform:translate(-50%,-50%); text-align:center; }
     .eyebrow { margin:0 0 12px; color:var(--acid); font-family:"PingFang TC","Microsoft JhengHei",sans-serif; font-size:.8rem; letter-spacing:.28em; text-transform:uppercase; }
@@ -97,7 +97,12 @@
     .spot:hover,.spot:focus-visible { border-color:#a51a2266; outline:none; background:#65090e12; box-shadow:inset 0 0 56px #b1171f18; }
     .spot:hover::before,.spot:focus-visible::before,.spot:hover::after,.spot:focus-visible::after { opacity:1; transform:translate(-50%,0); }
     .spot:hover::before,.spot:focus-visible::before { transform:translate(-50%,-50%) rotate(45deg); }
-    .door4-spot { left:53.8%; top:calc(50% - 19.7vw); width:5%; height:20.6vw; }
+    .corridor-hotspots { position:absolute; left:50%; top:50%; z-index:18; width:max(100vw,calc(100svh * 4 / 3)); height:max(100svh,calc(100vw * 3 / 4)); transform:translate(-50%,-50%); pointer-events:none; }
+    .corridor-hotspots .spot { pointer-events:auto; }
+    .door1-spot { left:32.8%; top:29.5%; width:3.7%; height:34.4%; }
+    .door2-spot { left:39.1%; top:37.3%; width:3.2%; height:24.8%; }
+    .door3-spot { left:64%; top:29%; width:4.6%; height:32.8%; }
+    .door4-spot { left:46%; top:41.4%; width:9.5%; height:15.5%; }
     .item-card { display:grid; grid-template-columns:minmax(150px,260px) 1fr; gap:clamp(20px,4vw,44px); align-items:center; text-align:left; }
     .item-card img { width:100%; max-height:46vh; object-fit:contain; filter:sepia(.15) saturate(.78) hue-rotate(76deg) contrast(1.12) drop-shadow(0 16px 26px #000c); }
     .code { display:block; margin-top:16px; color:var(--acid); font-size:clamp(1.25rem,4vw,2.4rem); letter-spacing:.12em; word-break:break-all; }
@@ -124,7 +129,6 @@
     @keyframes corridor-patrol { 0%,9% { transform:translate3d(-18vw,0,0); opacity:0; } 13% { opacity:.48; } 52% { transform:translate3d(112vw,0,0); opacity:.42; } 57%,100% { transform:translate3d(112vw,0,0); opacity:0; } }
     @keyframes corridor-near-cross { 0%,58% { transform:translate3d(34vw,0,0) scaleX(-1); opacity:0; } 62% { opacity:.18; } 79% { transform:translate3d(-128vw,0,0) scaleX(-1); opacity:.16; } 83%,100% { transform:translate3d(-128vw,0,0) scaleX(-1); opacity:0; } }
     @media (pointer:coarse) { .spot::before { opacity:.55; } }
-    @media (max-aspect-ratio:4/3) { .door4-spot { left:calc(50% + 5.1svh); top:23.8%; width:6.7svh; height:27.4%; } }
     @media (max-width:720px) {
       .hud { padding-top:max(10px,env(safe-area-inset-top)); padding-inline:max(10px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-right)); }
       .hud-right { gap:4px; }
@@ -133,7 +137,6 @@
       .supply-list { min-width:42px; }
       .supply-empty { padding:0 9px; font-size:.62rem; }
       .supply-chip { min-width:30px; padding:0 3px; border-right:1px solid #4f211f; }
-      .supply-chip span { display:none; }
       .supply-chip img { width:24px; height:24px; }
       .supply-count { padding:0 7px; font-size:.65rem; }
       .hud .sound { min-width:40px; height:40px; }
@@ -186,14 +189,15 @@
     const escapeHtml = value => String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
     const button = (label,target,extra="") => `<button class="choice ${extra}" type="button" data-go="${target}" data-web-action="go:${target}">${label}</button>`;
     const actionButton = (label,action,extra="") => `<button class="choice ${extra}" type="button" data-action="${action}" data-web-action="${action}">${label}</button>`;
-    const corridorButton = () => `<button class="choice corridor-return" type="button" data-action="corridor" data-web-action="corridor">BACK TO CORRIDOR &gt;&gt;&gt;</button>`;
+    const corridorButton = () => `<button class="corridor-return" type="button" aria-label="Back to corridor" data-action="corridor" data-web-action="corridor">BACK TO CORRIDOR &gt;&gt;&gt;</button>`;
     const frame = (image,inner,cls="") => `<div class="scene-frame ${cls}"><img class="scene-image" src="${ASSET+image}" alt=""><div class="veil"></div>${inner}</div>`;
     const caption = (eyebrow,title,body,controls,cls="") => `<section class="caption ${cls}"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${body}<div class="menu">${controls}</div></section>`;
     const hotspot = (label,target,style,webAction=`go:${target}`,extra="") => `<button class="spot ${extra}" type="button" aria-label="${label}" style="${style}" data-go="${target}" data-web-action="${webAction}"></button>`;
     const corridorNpcs = () => `<div class="corridor-npcs" aria-hidden="true"><img class="corridor-npc npc-distant" src="${ASSET}corridor-attendant.png" alt="" decoding="async"><img class="corridor-npc npc-near" src="${ASSET}corridor-attendant.png" alt="" decoding="async"></div>`;
+    const corridorDoors = (door4Target,door4Label) => `<div class="corridor-hotspots">${hotspot("Door 01","end1","","go:end1","door1-spot")}${hotspot("Door 02","ward","","go:ward","door2-spot")}${hotspot("Door 03","lab","","go:lab","door3-spot")}${hotspot(door4Label,door4Target,"",`go:${door4Target}`,"door4-spot")}</div>`;
     const suppliesHud = () => {
       const collected=SUPPLY_ITEMS.filter(item=>state.items.includes(item.id));
-      const contents=collected.length?collected.map(item=>`<span class="supply-chip" title="${item.label}"><img src="${ASSET+item.image}" alt=""><span>${item.code}</span></span>`).join(""):`<span class="supply-empty">EMPTY</span>`;
+      const contents=collected.length?collected.map(item=>`<span class="supply-chip" title="${item.label}" aria-label="${item.label}"><img src="${ASSET+item.image}" alt=""></span>`).join(""):`<span class="supply-empty">EMPTY</span>`;
       return `<div class="supplies" role="status" aria-label="Supplies: ${collected.length} of ${SUPPLY_ITEMS.length} collected"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-list">${contents}</span><strong class="supply-count">${collected.length}/${SUPPLY_ITEMS.length}</strong></div>`;
     };
     const homeHud = () => `<header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="${ASSET}infinity.png" alt=""></button><div class="hud-right">${suppliesHud()}<button class="sound" type="button" aria-label="${state.sound?"Mute":"Play"} original horror ambience" title="${state.sound?"Mute":"Play"} ambience" aria-pressed="${state.sound}" data-action="sound" data-web-action="sound"><span class="sound-icon" aria-hidden="true">♪</span></button></div></header>`;
@@ -208,13 +212,13 @@
       computer:()=>frame("ward.webp",caption("SEARCH / COMPUTER","RECYCLE BIN",`<div class="item-card"><img src="${ASSET}computer.png" alt="Computer"><p>The computer is not locked. The web log contains nothing unusual, but a sketch in the recycle bin holds a string of numbers:<span class="code">107379609107906906</span></p></div>`,button("BACK","ward"),"center")),
       newspaper:()=>frame("ward.webp",caption("SEARCH / NEWSPAPER","A DAMAGED REPORT",`<div class="item-card"><img src="${ASSET}newspaper.webp" alt="Old newspaper"><p>You find a newspaper under the pillow. Most of the print is pasted over and impossible to read. Only “hospital” remains visible. It seems someone was performing human experiments here when an explosion occurred.</p></div>`,button("BACK","ward"),"center")),
       doorPassword:()=>frame("ward.webp",caption("QUESTION","What is the code for the door?",`<p>Use the clues hidden around the room.</p>`,`${actionButton("136199","door-correct")}${actionButton("139166","door-wrong","danger")}`,"center")),
-      corridorLocked:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Door 04","lockedDoor","","go:lockedDoor","door4-spot")}`,"corridor-scene"),
+      corridorLocked:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door</p>${corridorDoors("lockedDoor","Door 04")}`,"corridor-scene"),
       lockedDoor:()=>frame("corridor.gif",`${caption("DOOR 04","NEED KEY TO OPEN DOOR",`<p>The lock has no keypad. Something small and metallic is missing.</p>`,"","center")}${corridorButton()}`,"corridor-scene"),
       lab:()=>frame("lab.jpeg",`<p class="prompt">Click the picture</p>${hotspot("Read the paper","labPaper","left:62%;top:6%;width:25%;height:43%")}${hotspot("Inspect the medicine","labMedicine","left:2%;top:9%;width:50%;height:54%")}${state.hasKey?"":hotspot("Search the collection","keyChoice","left:63%;top:34%;width:18%;height:48%")}${corridorButton()}`),
-      labPaper:()=>frame("lab.jpeg",caption("SEARCH / PAPER","A SMALL NOTE",`<div class="item-card"><img src="${ASSET}paper.webp" alt="Rolled map and note"><p>The rolled-up map doesn't seem special, but inside it you find a small note with a string of numbers:<span class="code">11</span></p></div>`,button("BACK","lab"),"center")),
+      labPaper:()=>frame("lab.jpeg",caption("SEARCH / PAPER","A SMALL NOTE",`<div class="item-card"><img src="${ASSET}paper.webp" alt="Rolled map and note"><p>The rolled-up map doesn't seem special, but inside it you find a small note with a string of numbers:<span class="code">40016</span></p></div>`,button("BACK","lab"),"center")),
       labMedicine:()=>frame("lab.jpeg",caption("SEARCH / MEDICINE","UNLABELLED LIQUID",`<div class="item-card"><img src="${ASSET}medicine.png" alt="Chemical bottles"><p>The liquids are unlabelled. One bottle releases a pungent chemical odour when opened. You seal the least damaged bottle and add it to your supplies as a sample.</p></div>`,button("BACK","lab"),"center")),
       keyChoice:()=>frame("lab.jpeg",caption("SEARCH / COLLECTION","AN OLD KEY",`<div class="item-card"><img src="${ASSET}key.png" alt="Old metal key"><p>A metal key is hidden behind the collection. It may open one of the doors in the corridor.</p></div>`,`${actionButton("KEEP IT","keep-key")}${button("PUT BACK","lab")}`,"center")),
-      corridorKey:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door · key acquired</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Use the key on Door 04","monitorOff","","go:monitorOff","door4-spot")}`,"corridor-scene"),
+      corridorKey:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door · key acquired</p>${corridorDoors("monitorOff","Use the key on Door 04")}`,"corridor-scene"),
       monitorOff:()=>frame("monitor-off.webp",`<p class="prompt">Click the picture</p>${hotspot("Inspect the upper monitor","monitorQuestion","left:79%;top:0%;width:18%;height:27%")}${hotspot("Touch the alarm controls","end2","left:1%;top:65%;width:29%;height:31%")} ${corridorButton()}`),
       monitorQuestion:()=>frame("monitor-off.webp",caption("FINAL SECURITY CHECK","Enter the pharmacy password",`<div class="item-card"><img src="${ASSET}password-clue.jpg" alt="Handwritten clue"><p>Use the two-digit number hidden inside the rolled paper in the pharmacy. The exit controls will remain sealed until the code is verified.</p></div>`,`<form class="password-form" data-password-form><input class="password-field" name="password" type="text" inputmode="numeric" pattern="[0-9]{2}" maxlength="2" autocomplete="off" aria-label="Two-digit pharmacy password" placeholder="ENTER 2-DIGIT CODE" required><button class="choice" type="submit" data-web-action="submit-password">UNLOCK</button></form>`,"center")),
       monitorOn:()=>frame("monitor-on.jpeg",`<p class="prompt">Monitoring unlocked · Click the picture</p>${hotspot("Trigger the alarm","end2","left:1%;top:65%;width:29%;height:31%")}${hotspot("Release the exit lock","end3","left:69%;top:64%;width:29%;height:33%")} ${corridorButton()}`,"clean"),
@@ -228,7 +232,7 @@
     function clearSupplies(){state.items=[];state.hasKey=false;state.monitorUnlocked=false;persist();}
     function collectSupply(id){
       if(!SUPPLY_ITEMS.some(item=>item.id===id)||state.items.includes(id))return false;
-      state.items.push(id);state.hasKey=state.items.includes("key");persist();return true;
+      state.items.push(id);state.hasKey=state.items.includes("key");persist();playItemSound(id);return true;
     }
     function resolveScene(id){
       if(id==="corridor")return state.hasKey?"corridorKey":"corridorLocked";
@@ -302,6 +306,48 @@
       };
       (palettes[kind]||palettes.button).forEach(([frequency,type,volume,duration,ratio],index)=>{ const osc=ctx.createOscillator(); const gain=ctx.createGain(); const start=now+index*.012; osc.type=type; osc.frequency.setValueAtTime(frequency,start); osc.frequency.exponentialRampToValueAtTime(frequency*ratio,start+duration); gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(volume,start+.008); gain.gain.exponentialRampToValueAtTime(.0001,start+duration); osc.connect(gain).connect(uiBus); osc.start(start); osc.stop(start+duration+.02); });
     }
+    function playItemSound(id){
+      if(!state.sound||!audio||audio.ctx.state!=="running")return;
+      const {ctx,uiBus}=audio; const now=ctx.currentTime+.018;
+      const tone=(frequency,type,volume,delay,duration,ratio=1)=>{
+        const osc=ctx.createOscillator(); const gain=ctx.createGain(); const start=now+delay;
+        osc.type=type; osc.frequency.setValueAtTime(frequency,start); osc.frequency.exponentialRampToValueAtTime(Math.max(20,frequency*ratio),start+duration);
+        gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(volume,start+.008); gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        osc.connect(gain).connect(uiBus); osc.start(start); osc.stop(start+duration+.025);
+      };
+      const noise=(delay,duration,volume,startFrequency,endFrequency,type="bandpass",q=.8,rate=1)=>{
+        const source=ctx.createBufferSource(); const filter=ctx.createBiquadFilter(); const gain=ctx.createGain(); const start=now+delay;
+        source.buffer=makeNoiseBuffer(ctx,duration+.08); source.playbackRate.value=rate; filter.type=type; filter.Q.value=q;
+        filter.frequency.setValueAtTime(startFrequency,start); filter.frequency.exponentialRampToValueAtTime(endFrequency,start+duration);
+        gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(volume,start+.012); gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        source.connect(filter).connect(gain).connect(uiBus); source.start(start); source.stop(start+duration+.025);
+      };
+      if(id==="data"){
+        noise(0,.07,.018,2600,900,"highpass",.3);
+        [[392,"square",.032,0,.09,1.22],[587,"square",.026,.09,.1,1.18],[880,"sine",.024,.2,.18,.72]].forEach(args=>tone(...args));
+      }else if(id==="newspaper"){
+        noise(0,.34,.085,3200,1050,"bandpass",.65,1.08);
+        noise(.12,.4,.062,4600,1450,"bandpass",.9,.84);
+        noise(.34,.2,.035,1800,3900,"highpass",.35,1.2);
+      }else if(id==="note"){
+        noise(0,.2,.072,1450,4700,"highpass",.4,1.18);
+        noise(.1,.28,.058,4200,1250,"bandpass",1.05,.92);
+        tone(170,"sine",.018,.26,.13,.58);
+      }else if(id==="medicine"){
+        noise(0,.58,.046,260,760,"lowpass",.55,.78);
+        noise(.13,.44,.035,820,280,"lowpass",.7,1.1);
+        [[1120,"sine",.026,.04,.24,.7],[1540,"triangle",.022,.23,.21,.62],[980,"sine",.018,.42,.25,.66]].forEach(args=>tone(...args));
+      }else if(id==="key"){
+        [[1180,"triangle",.045,0,.28,.55],[1840,"sine",.038,.035,.34,.48],[2620,"sine",.026,.1,.28,.6],[1430,"triangle",.032,.18,.36,.46]].forEach(args=>tone(...args));
+        noise(.02,.18,.018,5200,1800,"highpass",.45,1.25);
+      }
+    }
+    function pendingSupply(target){
+      if(target.dataset.action==="keep-key")return state.items.includes("key")?null:"key";
+      const next=target.dataset.go?resolveScene(target.dataset.go):"";
+      const id=sceneSupply[next];
+      return id&&!state.items.includes(id)?id:null;
+    }
     function startSound(){
       if(audio)return; const Ctx=window.AudioContext||window.webkitAudioContext; if(!Ctx)return; const ctx=new Ctx();
       const master=ctx.createGain(); const compressor=ctx.createDynamicsCompressor(); const filter=ctx.createBiquadFilter(); const drone=ctx.createGain(); const air=ctx.createGain(); const heartBus=ctx.createGain(); const metalBus=ctx.createGain(); const uiBus=ctx.createGain(); const reverb=ctx.createConvolver(); const wet=ctx.createGain();
@@ -330,7 +376,7 @@
       if(action==="monitor-wrong"){state.monitorUnlocked=false;persist();notify("ACCESS DENIED");}
       if(action==="restart")return go("home");
     }
-    document.addEventListener("click",event=>{ const target=event.target.closest("[data-go],[data-action]"); if(!target)return; if(target.dataset.action==="sound"){toggleSound();if(state.sound)playClickSound("power");return;} playClickSound(clickSoundKind(target)); if(target.dataset.go)go(target.dataset.go);else perform(target.dataset.action); });
+    document.addEventListener("click",event=>{ const target=event.target.closest("[data-go],[data-action]"); if(!target)return; if(target.dataset.action==="sound"){toggleSound();if(state.sound)playClickSound("power");return;} if(!pendingSupply(target))playClickSound(clickSoundKind(target)); if(target.dataset.go)go(target.dataset.go);else perform(target.dataset.action); });
     document.addEventListener("submit",event=>{
       const form=event.target.closest("[data-password-form]"); if(!form)return; event.preventDefault();
       const field=form.elements.password; const value=String(field.value||"").replace(/\D/g,"");
@@ -350,4 +396,6 @@
     render();
     registerWebMcp();
   </script>
+
+
 </body></html>
