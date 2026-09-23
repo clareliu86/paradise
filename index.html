@@ -35,16 +35,14 @@
     .brand:focus-visible img { filter:sepia(1) saturate(3) drop-shadow(2px 0 var(--cyan)) drop-shadow(-2px 0 var(--red)) drop-shadow(0 0 8px var(--acid)); }
     .brand img { display:block; width:40px; height:26px; object-fit:contain; filter:sepia(1) saturate(2.2) drop-shadow(2px 0 var(--cyan)) drop-shadow(-2px 0 var(--red)); }
     .hud-right { display:flex; align-items:flex-start; gap:10px; }
-    .supplies { pointer-events:none; display:grid; grid-template-columns:auto minmax(104px,1fr); min-height:46px; border:1px solid #7e2928; border-left:3px solid var(--red); background:linear-gradient(110deg,#030b08ed,#150607e8); box-shadow:inset 0 0 20px #42070a55,0 10px 30px #0008; backdrop-filter:blur(8px); }
+    .supplies { pointer-events:none; display:grid; grid-template-columns:auto auto auto; min-height:46px; border:1px solid #7e2928; border-left:3px solid var(--red); background:linear-gradient(110deg,#030b08ed,#150607e8); box-shadow:inset 0 0 20px #42070a55,0 10px 30px #0008; backdrop-filter:blur(8px); }
     .supplies-label { display:flex; align-items:center; padding:0 13px; color:#a89169; font-family:"PingFang TC","Microsoft JhengHei","Courier New",monospace; font-size:.66rem; font-weight:700; letter-spacing:.17em; white-space:nowrap; }
-    .supply-slot { position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; min-width:104px; padding:0 12px; border-left:1px solid #5d2522; color:#6f6759; font-family:"Courier New",monospace; font-size:.72rem; font-weight:700; letter-spacing:.14em; overflow:hidden; }
-    .supply-slot::before { content:""; position:absolute; inset:0; opacity:.22; background:repeating-linear-gradient(135deg,transparent 0 8px,#712123 9px 10px); }
-    .supply-slot > * { position:relative; z-index:1; }
-    .supply-slot strong { color:inherit; font-size:.78rem; letter-spacing:.06em; }
-    .supply-slot.filled { color:var(--acid); background:#38100b70; text-shadow:0 0 10px #e7bc4d55; }
-    .supply-slot.filled::before { opacity:.12; }
-    .supply-item { display:flex; align-items:center; gap:7px; }
-    .supply-item img { width:28px; height:28px; object-fit:contain; filter:sepia(.35) saturate(.9) drop-shadow(0 0 5px #d9b86755); }
+    .supply-list { position:relative; display:flex; align-items:stretch; min-width:76px; border-left:1px solid #5d2522; color:#6f6759; font-family:"Courier New",monospace; font-size:.65rem; font-weight:700; letter-spacing:.08em; overflow:hidden; }
+    .supply-list::before { content:""; position:absolute; inset:0; opacity:.16; background:repeating-linear-gradient(135deg,transparent 0 8px,#712123 9px 10px); }
+    .supply-empty { position:relative; z-index:1; display:flex; align-items:center; padding:0 13px; letter-spacing:.14em; }
+    .supply-chip { position:relative; z-index:1; display:flex; align-items:center; gap:5px; min-width:54px; padding:0 8px; border-right:1px solid #4f211f; color:var(--acid); text-shadow:0 0 10px #e7bc4d55; white-space:nowrap; }
+    .supply-chip img { width:26px; height:26px; object-fit:contain; filter:sepia(.35) saturate(.9) drop-shadow(0 0 5px #d9b86755); }
+    .supply-count { display:flex; align-items:center; padding:0 11px; border-left:1px solid #5d2522; color:var(--acid); font-family:"Courier New",monospace; font-size:.72rem; letter-spacing:.06em; }
     .hud .sound { position:relative; min-width:46px; padding:0; border:0; background:transparent; box-shadow:none; backdrop-filter:none; color:#ddd0b4; }
     .hud .sound:hover,.hud .sound:focus-visible { color:var(--acid); border:0; outline:none; background:transparent; box-shadow:none; transform:none; text-shadow:0 0 12px #e9bd4b77; }
     .sound[aria-pressed="true"] { color:var(--acid); }
@@ -103,6 +101,11 @@
     .item-card { display:grid; grid-template-columns:minmax(150px,260px) 1fr; gap:clamp(20px,4vw,44px); align-items:center; text-align:left; }
     .item-card img { width:100%; max-height:46vh; object-fit:contain; filter:sepia(.15) saturate(.78) hue-rotate(76deg) contrast(1.12) drop-shadow(0 16px 26px #000c); }
     .code { display:block; margin-top:16px; color:var(--acid); font-size:clamp(1.25rem,4vw,2.4rem); letter-spacing:.12em; word-break:break-all; }
+    .password-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; width:min(100%,520px); }
+    .password-field { min-width:0; height:58px; padding:0 18px; border:1px solid #7d2b28; border-left:3px solid var(--red); border-radius:0; outline:none; background:#020604e8; color:var(--acid); font-family:"Courier New",monospace; font-size:1.15rem; font-weight:700; letter-spacing:.28em; text-align:center; box-shadow:inset 0 0 24px #42070a55; caret-color:var(--red); }
+    .password-field::placeholder { color:#716755; font-size:.72rem; letter-spacing:.14em; }
+    .password-field:focus { border-color:#d2aa4d; box-shadow:inset 0 0 24px #5e170c66,0 0 18px #b1171f55; }
+    .password-form .choice { min-width:150px; }
     .reference { width:min(94vw,1100px); max-height:78vh; overflow:auto; text-align:left; }
     .credits { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 24px; margin-top:20px; }
     .credits a { overflow-wrap:anywhere; color:#c8c4ad; line-height:1.5; }
@@ -125,11 +128,14 @@
     @media (max-width:720px) {
       .hud { padding-top:max(10px,env(safe-area-inset-top)); padding-inline:max(10px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-right)); }
       .hud-right { gap:4px; }
-      .supplies { grid-template-columns:minmax(86px,1fr); min-height:40px; }
+      .supplies { grid-template-columns:auto auto; min-height:40px; }
       .supplies-label { display:none; }
-      .supply-slot { min-width:86px; padding:0 9px; font-size:.64rem; }
-      .supply-item { gap:5px; }
-      .supply-item img { width:24px; height:24px; }
+      .supply-list { min-width:42px; }
+      .supply-empty { padding:0 9px; font-size:.62rem; }
+      .supply-chip { min-width:30px; padding:0 3px; border-right:1px solid #4f211f; }
+      .supply-chip span { display:none; }
+      .supply-chip img { width:24px; height:24px; }
+      .supply-count { padding:0 7px; font-size:.65rem; }
       .hud .sound { min-width:40px; height:40px; }
       .screen { padding-inline:16px; }
       .caption { bottom:max(24px,4vh); padding:20px; max-height:67vh; overflow:auto; }
@@ -146,6 +152,8 @@
       .choice,.text-link { min-width:140px; min-height:52px; font-size:.88rem; padding:12px 15px; }
       .item-card { grid-template-columns:1fr; text-align:center; }
       .item-card img { max-height:25vh; }
+      .password-form { grid-template-columns:1fr; width:100%; }
+      .password-form .choice { width:100%; }
       .credits { grid-template-columns:1fr; }
       .foot { display:none; }
     }
@@ -153,15 +161,27 @@
   </style>
 </head>
 <body>
-  <main id="game" class="game" aria-live="polite"><header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="./assets/infinity.png" alt=""></button><div class="hud-right"><div class="supplies" role="status" aria-label="Supplies: empty"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-slot empty"><span>EMPTY</span><strong>0/1</strong></span></div><button class="sound" type="button" aria-label="Play original horror ambience" title="Play ambience" aria-pressed="false" data-action="sound" data-web-action="sound"><span class="sound-icon" aria-hidden="true">♪</span></button></div></header><div class="scene-frame clean"><img class="scene-image" src="./assets/home.jpeg" alt=""><div class="veil"></div><section class="screen"><div class="home"><h1 class="title">PARADISE</h1><div class="menu"><button class="choice " type="button" data-go="intro" data-web-action="go:intro">START</button><button class="choice " type="button" data-go="reference" data-web-action="go:reference">MORE</button></div></div></section><p class="foot">@CLARE LIU</p></div><span class="sr-only">Current scene: home. Key: not acquired.</span></main>
+  <main id="game" class="game" aria-live="polite"><header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="./assets/infinity.png" alt=""></button><div class="hud-right"><div class="supplies" role="status" aria-label="Supplies: 0 of 5 collected"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-list"><span class="supply-empty">EMPTY</span></span><strong class="supply-count">0/5</strong></div><button class="sound" type="button" aria-label="Play original horror ambience" title="Play ambience" aria-pressed="false" data-action="sound" data-web-action="sound"><span class="sound-icon" aria-hidden="true">♪</span></button></div></header><div class="scene-frame clean"><img class="scene-image" src="./assets/home.jpeg" alt=""><div class="veil"></div><section class="screen"><div class="home"><h1 class="title">PARADISE</h1><div class="menu"><button class="choice " type="button" data-go="intro" data-web-action="go:intro">START</button><button class="choice " type="button" data-go="reference" data-web-action="go:reference">MORE</button></div></div></section><p class="foot">@CLARE LIU</p></div><span class="sr-only">Current scene: home. Supplies collected: 0 of 5. Key: not acquired. Final password: locked.</span></main>
   <div class="scanlines" aria-hidden="true"></div>
   <div id="toast" class="toast" role="status"></div>
   <script>
     const ASSET = "./assets/";
     const sceneIds = ["home","reference","intro","broadcast","contracts","ward","computer","newspaper","doorPassword","corridorLocked","lockedDoor","lab","labPaper","labMedicine","keyChoice","corridorKey","monitorOff","monitorQuestion","monitorOn","end1","end2","end3"];
-    const saved = JSON.parse(localStorage.getItem("paradise-game-state") || "{}");
-    const state = { hasKey:Boolean(saved.hasKey), sound:false };
     let current = sceneIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : "home";
+    const SUPPLY_ITEMS = [
+      {id:"data",label:"Code data",code:"DATA",image:"computer.png"},
+      {id:"newspaper",label:"Damaged newspaper",code:"NEWS",image:"newspaper.webp"},
+      {id:"note",label:"Laboratory note",code:"NOTE",image:"paper.webp"},
+      {id:"medicine",label:"Medicine sample",code:"MED",image:"medicine.png"},
+      {id:"key",label:"Old metal key",code:"KEY",image:"key.png"}
+    ];
+    const saved = JSON.parse(localStorage.getItem("paradise-game-state") || "{}");
+    const savedItems = Array.isArray(saved.items) ? saved.items.filter(id=>SUPPLY_ITEMS.some(item=>item.id===id)) : [];
+    const state = { items:savedItems, hasKey:savedItems.includes("key"), monitorUnlocked:Boolean(saved.monitorUnlocked)&&savedItems.includes("key"), sound:false };
+    if(current==="home"){state.items=[];state.hasKey=false;state.monitorUnlocked=false;localStorage.removeItem("paradise-game-state");}
+    else if(["corridorKey","monitorOff","monitorQuestion","monitorOn","end3"].includes(current)&&!state.hasKey)current="lockedDoor";
+    else if(["monitorOn","end3"].includes(current)&&!state.monitorUnlocked)current="monitorOff";
+    if(location.hash&&location.hash.slice(1)!==current)history.replaceState(null,"",`#${current}`);
     let audio;
     const escapeHtml = value => String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
     const button = (label,target,extra="") => `<button class="choice ${extra}" type="button" data-go="${target}" data-web-action="go:${target}">${label}</button>`;
@@ -171,9 +191,11 @@
     const caption = (eyebrow,title,body,controls,cls="") => `<section class="caption ${cls}"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${body}<div class="menu">${controls}</div></section>`;
     const hotspot = (label,target,style,webAction=`go:${target}`,extra="") => `<button class="spot ${extra}" type="button" aria-label="${label}" style="${style}" data-go="${target}" data-web-action="${webAction}"></button>`;
     const corridorNpcs = () => `<div class="corridor-npcs" aria-hidden="true"><img class="corridor-npc npc-distant" src="${ASSET}corridor-attendant.png" alt="" decoding="async"><img class="corridor-npc npc-near" src="${ASSET}corridor-attendant.png" alt="" decoding="async"></div>`;
-    const suppliesHud = () => state.hasKey
-      ? `<div class="supplies" role="status" aria-label="Supplies: key collected"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-slot filled"><span class="supply-item"><img src="${ASSET}key.png" alt=""><span>KEY</span></span><strong>×1</strong></span></div>`
-      : `<div class="supplies" role="status" aria-label="Supplies: empty"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-slot empty"><span>EMPTY</span><strong>0/1</strong></span></div>`;
+    const suppliesHud = () => {
+      const collected=SUPPLY_ITEMS.filter(item=>state.items.includes(item.id));
+      const contents=collected.length?collected.map(item=>`<span class="supply-chip" title="${item.label}"><img src="${ASSET+item.image}" alt=""><span>${item.code}</span></span>`).join(""):`<span class="supply-empty">EMPTY</span>`;
+      return `<div class="supplies" role="status" aria-label="Supplies: ${collected.length} of ${SUPPLY_ITEMS.length} collected"><span class="supplies-label">物資 / SUPPLIES</span><span class="supply-list">${contents}</span><strong class="supply-count">${collected.length}/${SUPPLY_ITEMS.length}</strong></div>`;
+    };
     const homeHud = () => `<header class="hud"><button class="brand" type="button" aria-label="Return home" data-action="home" data-web-action="home"><img src="${ASSET}infinity.png" alt=""></button><div class="hud-right">${suppliesHud()}<button class="sound" type="button" aria-label="${state.sound?"Mute":"Play"} original horror ambience" title="${state.sound?"Mute":"Play"} ambience" aria-pressed="${state.sound}" data-action="sound" data-web-action="sound"><span class="sound-icon" aria-hidden="true">♪</span></button></div></header>`;
 
     const scenes = {
@@ -189,22 +211,40 @@
       corridorLocked:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Door 04","lockedDoor","","go:lockedDoor","door4-spot")}`,"corridor-scene"),
       lockedDoor:()=>frame("corridor.gif",`${caption("DOOR 04","NEED KEY TO OPEN DOOR",`<p>The lock has no keypad. Something small and metallic is missing.</p>`,"","center")}${corridorButton()}`,"corridor-scene"),
       lab:()=>frame("lab.jpeg",`<p class="prompt">Click the picture</p>${hotspot("Read the paper","labPaper","left:62%;top:6%;width:25%;height:43%")}${hotspot("Inspect the medicine","labMedicine","left:2%;top:9%;width:50%;height:54%")}${state.hasKey?"":hotspot("Search the collection","keyChoice","left:63%;top:34%;width:18%;height:48%")}${corridorButton()}`),
-      labPaper:()=>frame("lab.jpeg",caption("SEARCH / PAPER","A SMALL NOTE",`<div class="item-card"><img src="${ASSET}paper.webp" alt="Rolled map and note"><p>The rolled-up map doesn't seem special, but inside it you find a small note with a string of numbers:<span class="code">19911107</span></p></div>`,button("BACK","lab"),"center")),
-      labMedicine:()=>frame("lab.jpeg",caption("SEARCH / MEDICINE","UNLABELLED LIQUID",`<div class="item-card"><img src="${ASSET}medicine.png" alt="Chemical bottles"><p>The liquids are unlabelled. One bottle releases a pungent chemical odour when opened. You decide not to move anything and put it back.</p></div>`,button("BACK","lab"),"center")),
+      labPaper:()=>frame("lab.jpeg",caption("SEARCH / PAPER","A SMALL NOTE",`<div class="item-card"><img src="${ASSET}paper.webp" alt="Rolled map and note"><p>The rolled-up map doesn't seem special, but inside it you find a small note with a string of numbers:<span class="code">11</span></p></div>`,button("BACK","lab"),"center")),
+      labMedicine:()=>frame("lab.jpeg",caption("SEARCH / MEDICINE","UNLABELLED LIQUID",`<div class="item-card"><img src="${ASSET}medicine.png" alt="Chemical bottles"><p>The liquids are unlabelled. One bottle releases a pungent chemical odour when opened. You seal the least damaged bottle and add it to your supplies as a sample.</p></div>`,button("BACK","lab"),"center")),
       keyChoice:()=>frame("lab.jpeg",caption("SEARCH / COLLECTION","AN OLD KEY",`<div class="item-card"><img src="${ASSET}key.png" alt="Old metal key"><p>A metal key is hidden behind the collection. It may open one of the doors in the corridor.</p></div>`,`${actionButton("KEEP IT","keep-key")}${button("PUT BACK","lab")}`,"center")),
       corridorKey:()=>frame("corridor.gif",`${corridorNpcs()}<p class="prompt">Choose the door · key acquired</p>${hotspot("Door 01","end1","left:27%;top:23%;width:12%;height:55%")}${hotspot("Door 02","ward","left:39%;top:36%;width:8%;height:37%")}${hotspot("Door 03","lab","left:61%;top:31%;width:10%;height:43%")}${hotspot("Use the key on Door 04","monitorOff","","go:monitorOff","door4-spot")}`,"corridor-scene"),
       monitorOff:()=>frame("monitor-off.webp",`<p class="prompt">Click the picture</p>${hotspot("Inspect the upper monitor","monitorQuestion","left:79%;top:0%;width:18%;height:27%")}${hotspot("Touch the alarm controls","end2","left:1%;top:65%;width:29%;height:31%")} ${corridorButton()}`),
-      monitorQuestion:()=>frame("monitor-off.webp",caption("QUESTION","What is the password for monitoring?",`<div class="item-card"><img src="${ASSET}password-clue.jpg" alt="Handwritten clue"><p>The answer is assembled from the clues you found in the ward and laboratory.</p></div>`,`${actionButton("4910101899","monitor-wrong","danger")}${actionButton("1018102107","monitor-correct")}`,"center")),
+      monitorQuestion:()=>frame("monitor-off.webp",caption("FINAL SECURITY CHECK","Enter the pharmacy password",`<div class="item-card"><img src="${ASSET}password-clue.jpg" alt="Handwritten clue"><p>Use the two-digit number hidden inside the rolled paper in the pharmacy. The exit controls will remain sealed until the code is verified.</p></div>`,`<form class="password-form" data-password-form><input class="password-field" name="password" type="text" inputmode="numeric" pattern="[0-9]{2}" maxlength="2" autocomplete="off" aria-label="Two-digit pharmacy password" placeholder="ENTER 2-DIGIT CODE" required><button class="choice" type="submit" data-web-action="submit-password">UNLOCK</button></form>`,"center")),
       monitorOn:()=>frame("monitor-on.jpeg",`<p class="prompt">Monitoring unlocked · Click the picture</p>${hotspot("Trigger the alarm","end2","left:1%;top:65%;width:29%;height:31%")}${hotspot("Release the exit lock","end3","left:69%;top:64%;width:29%;height:33%")} ${corridorButton()}`,"clean"),
       end1:()=>frame("zombie.webp",`<img class="ending-figure" src="${ASSET}end1-ghost.png" alt="" aria-hidden="true"><section class="caption ending ending-death" data-case="死亡確認 / INCIDENT FILE" data-number="01"><p class="eyebrow">ENDING 01 · DOOR 01</p><h1>BYE.</h1><p>You decide to walk through the first door on the left. You did not expect zombies behind it. One of them detonates the bomb.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-shock"),
       end2:()=>frame("ending02-detention.jpg",`<section class="caption ending ending-captured" data-case="收容記錄 / SUBJECT FILE" data-number="02"><p class="eyebrow">ENDING 02 · DETAINED</p><h1>SUBJECT NO.16</h1><p>You touched the alarm and drew the manager's attention. The manager finds you in the monitoring room and takes you away for human research experiments.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-captured"),
       end3:()=>frame("home.jpeg",`<img class="ending-figure watcher" src="${ASSET}end3-watcher.png" alt="" aria-hidden="true"><section class="caption ending ending-escape" data-case="逃出確認 / CASE CLOSED" data-number="03"><p class="eyebrow">ENDING 03 · ESCAPED</p><h1>CONGRATULATIONS</h1><p>Congratulations on your successful escape! Rewards will be credited directly to your bank account upon your arrival home.</p><p style="margin-top:12px">But... don't forget the contract.</p><p style="margin-top:12px;color:var(--ending-accent)">SEE YOU NEXT TIME.</p><div class="menu">${actionButton("RESTART","restart")}</div></section>`,"end-escape")
     };
 
+    const sceneSupply = {computer:"data",newspaper:"newspaper",labPaper:"note",labMedicine:"medicine"};
     function persist(){ localStorage.setItem("paradise-game-state",JSON.stringify(state)); }
-    function resolveScene(id){ return id==="corridor"?(state.hasKey?"corridorKey":"corridorLocked"):id; }
-    function go(id){ const next=resolveScene(id); if(!sceneIds.includes(next))return; current=next; if(location.hash.slice(1)!==next)history.pushState(null,"",`#${next}`); render(); }
-    function render(){ document.title=current==="home"?"PARADISE — WebGame":`${current.replace(/([A-Z])/g," $1").toUpperCase()} | PARADISE`; document.getElementById("game").innerHTML=`${homeHud()}${scenes[current]()}<span class="sr-only">Current scene: ${escapeHtml(current)}. Key: ${state.hasKey?"acquired":"not acquired"}.</span>`; updateSoundscape(current); }
+    function clearSupplies(){state.items=[];state.hasKey=false;state.monitorUnlocked=false;persist();}
+    function collectSupply(id){
+      if(!SUPPLY_ITEMS.some(item=>item.id===id)||state.items.includes(id))return false;
+      state.items.push(id);state.hasKey=state.items.includes("key");persist();return true;
+    }
+    function resolveScene(id){
+      if(id==="corridor")return state.hasKey?"corridorKey":"corridorLocked";
+      if(id==="corridorKey"&&!state.hasKey)return "corridorLocked";
+      if(["monitorOff","monitorQuestion","monitorOn","end3"].includes(id)&&!state.hasKey)return "lockedDoor";
+      if(["monitorOn","end3"].includes(id)&&!state.monitorUnlocked)return "monitorOff";
+      return id;
+    }
+    function go(id){
+      if(id==="home")clearSupplies();
+      const next=resolveScene(id); if(!sceneIds.includes(next))return;
+      const acquired=sceneSupply[next]&&collectSupply(sceneSupply[next]);
+      current=next; if(location.hash.slice(1)!==next)history.pushState(null,"",`#${next}`); render();
+      if(acquired){const item=SUPPLY_ITEMS.find(entry=>entry.id===sceneSupply[next]);notify(`${item.code} COLLECTED`);}
+    }
+    function render(){ document.title=current==="home"?"PARADISE — WebGame":`${current.replace(/([A-Z])/g," $1").toUpperCase()} | PARADISE`; document.getElementById("game").innerHTML=`${homeHud()}${scenes[current]()}<span class="sr-only">Current scene: ${escapeHtml(current)}. Supplies collected: ${state.items.length} of ${SUPPLY_ITEMS.length}. Key: ${state.hasKey?"acquired":"not acquired"}. Final password: ${state.monitorUnlocked?"verified":"locked"}.</span>`; updateSoundscape(current); }
     function notify(message){ const toast=document.getElementById("toast"); toast.textContent=message; toast.classList.add("show"); clearTimeout(notify.timer); notify.timer=setTimeout(()=>toast.classList.remove("show"),1800); }
     function makeNoiseBuffer(ctx,seconds=8){
       const buffer=ctx.createBuffer(1,ctx.sampleRate*seconds,ctx.sampleRate);
@@ -285,25 +325,29 @@
       if(action==="corridor")return go("corridor");
       if(action==="door-correct"){notify("ACCESS GRANTED");return go("corridorLocked");}
       if(action==="door-wrong"){notify("WRONG CODE");return go("ward");}
-      if(action==="keep-key"){state.hasKey=true;persist();notify("KEY ACQUIRED");return go("lab");}
-      if(action==="monitor-correct"){notify("MONITORING ONLINE");return go("monitorOn");}
-      if(action==="monitor-wrong"){notify("ACCESS DENIED");return go("monitorOff");}
-      if(action==="restart"){state.hasKey=false;persist();return go("home");}
+      if(action==="keep-key"){collectSupply("key");notify("KEY ACQUIRED");return go("lab");}
+      if(action==="monitor-correct"){if(!state.hasKey){notify("KEY REQUIRED");return go("lockedDoor");}state.monitorUnlocked=true;persist();notify("PASSWORD VERIFIED");return go("monitorOn");}
+      if(action==="monitor-wrong"){state.monitorUnlocked=false;persist();notify("ACCESS DENIED");}
+      if(action==="restart")return go("home");
     }
     document.addEventListener("click",event=>{ const target=event.target.closest("[data-go],[data-action]"); if(!target)return; if(target.dataset.action==="sound"){toggleSound();if(state.sound)playClickSound("power");return;} playClickSound(clickSoundKind(target)); if(target.dataset.go)go(target.dataset.go);else perform(target.dataset.action); });
-    addEventListener("popstate",()=>{current=sceneIds.includes(location.hash.slice(1))?location.hash.slice(1):"home";render();});
+    document.addEventListener("submit",event=>{
+      const form=event.target.closest("[data-password-form]"); if(!form)return; event.preventDefault();
+      const field=form.elements.password; const value=String(field.value||"").replace(/\D/g,"");
+      if(value==="11"){playClickSound("confirm");perform("monitor-correct");}
+      else{playClickSound("danger");perform("monitor-wrong");field.value="";field.focus();}
+    });
+    addEventListener("popstate",()=>{const requested=sceneIds.includes(location.hash.slice(1))?location.hash.slice(1):"home";if(requested==="home")clearSupplies();current=resolveScene(requested);if(current!==requested)history.replaceState(null,"",`#${current}`);render();});
     addEventListener("keydown",event=>{if(event.key==="Escape"&&current!=="home")go("home");});
 
     function registerWebMcp(){
       const context=document.modelContext; if(!context?.registerTool)return;
       const safeRegister=tool=>{try{void Promise.resolve(context.registerTool(tool)).catch(()=>{});}catch{}};
-      safeRegister({name:"read_game_state",title:"Read Paradise game state",description:"Read the current visible scene, whether the key has been collected, and the actions currently available in the visible interface.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(){return{scene:current,hasKey:state.hasKey,availableActions:[...document.querySelectorAll("[data-web-action]")].map(el=>({action:el.dataset.webAction,label:el.getAttribute("aria-label")||el.textContent.trim()}))};}});
-      safeRegister({name:"choose_game_action",title:"Choose a visible game action",description:"Choose one action that is currently available in the Paradise game interface. Read the state first to get the action identifier.",inputSchema:{type:"object",properties:{action:{type:"string",minLength:1}},required:["action"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||typeof input.action!=="string")throw new Error("action must be a string");const visible=[...document.querySelectorAll("[data-web-action]")].find(el=>el.dataset.webAction===input.action);if(!visible)throw new Error("That action is not available in the current scene");visible.click();return{scene:current,hasKey:state.hasKey};}});
-      safeRegister({name:"restart_game",title:"Restart Paradise",description:"Restart the game from the title screen and clear the collected key.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(){perform("restart");return{scene:current,hasKey:state.hasKey};}});
+      safeRegister({name:"read_game_state",title:"Read Paradise game state",description:"Read the current visible scene, collected supplies, key status, final password status, and available actions.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(){return{scene:current,hasKey:state.hasKey,passwordVerified:state.monitorUnlocked,supplies:[...state.items],availableActions:[...document.querySelectorAll("[data-web-action]")].map(el=>({action:el.dataset.webAction,label:el.getAttribute("aria-label")||el.textContent.trim()}))};}});
+      safeRegister({name:"choose_game_action",title:"Choose a visible game action",description:"Choose one action that is currently available in the Paradise game interface. Read the state first to get the action identifier.",inputSchema:{type:"object",properties:{action:{type:"string",minLength:1}},required:["action"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||typeof input.action!=="string")throw new Error("action must be a string");const visible=[...document.querySelectorAll("[data-web-action]")].find(el=>el.dataset.webAction===input.action);if(!visible)throw new Error("That action is not available in the current scene");visible.click();return{scene:current,hasKey:state.hasKey,passwordVerified:state.monitorUnlocked,supplies:[...state.items]};}});
+      safeRegister({name:"restart_game",title:"Restart Paradise",description:"Restart the game from the title screen and clear all collected supplies.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(){perform("restart");return{scene:current,hasKey:state.hasKey,supplies:[...state.items]};}});
     }
     render();
     registerWebMcp();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3f0b4a55c462035',t:'MTc5MDA3Mzc3NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; visibility: hidden;"></iframe>
-
 </body></html>
